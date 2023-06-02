@@ -48,7 +48,7 @@ const Login = () => {
 
         dispatch({
           type: 'USER_LOGIN',
-          payload: response.data.profile
+          payload: response.data[0]
           //  token: response?.data?.data?.token,
       
       })
@@ -60,11 +60,7 @@ const Login = () => {
       console.log("Login successful");
     } catch (err) {
       console.log("Error: ", err);
-      dispatch({
-        type: 'USER_LOGOUT'
-        //  token: response?.data?.data?.token,
-    
-    })
+      
     }
   };
 

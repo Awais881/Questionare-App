@@ -22,6 +22,9 @@ const Login = React.lazy(() => import('./views/pages/login/Login'))
   // render() {
     function App() {
     let { state, dispatch } = useContext(GlobalContext);
+
+
+    
     return (
      <>
       <HashRouter>

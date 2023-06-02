@@ -32,16 +32,16 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Add-Questions',
+    name: 'Questions',
     to: '/theme/typography',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
   },
-  // {
-  //   component: CNavItem,
-  //   name: 'Colors',
-  //   to: '/theme/colors',
-  //   icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
-  // },
+  {
+    component: CNavItem,
+    name: 'Add Questions',
+    to: '/theme/colors',
+    icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+  },
   // {
   //   component: CNavTitle,
   //   name: 'Components',

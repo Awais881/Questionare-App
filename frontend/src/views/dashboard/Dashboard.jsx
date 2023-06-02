@@ -57,10 +57,11 @@ import WidgetsDropdown from "../widgets/WidgetsDropdown";
 
 const Dashboard = () => {
   const [questions, setQuestions] = useState([]);
-  const [editQuestion, setEditQuestion] = useState(null);
-  const [startRange, setStartRange] = useState("");
-  const [endRange, setEndRange] = useState("");
+  const [updateQuestionId, setUpdateQuestionId] = useState('');
+  const [updatedQuestion, setUpdatedQuestion] = useState('');
+  const [updatedAnswer, setUpdatedAnswer] = useState('');
   const { state, dispatch } = useContext(GlobalContext);
+
   useEffect(() => {
     fetchQuestions();
   }, []);
@@ -74,29 +75,37 @@ const Dashboard = () => {
       // Handle error
     }
   };
-  const handleUpdate = (questionId, start, end) => {
-    setEditQuestion(questionId);
-    setStartRange(start);
-    setEndRange(end);
-  };
 
-  const handleSave = async (questionId, updatedQuestion) => {
+
+  const deleteQuestion = async (id) => {
     try {
-      await axios.put(
-        `http://localhost:5001/api/question/${questionId}`,
-        updatedQuestion
-      );
-      setEditQuestion(null);
-      setStartRange("");
-      setEndRange("");
-      // Refresh questions
-      fetchQuestions();
+      await axios.delete(`http://localhost:5001/api/question/${id}`);
+      fetchQuestions(); // Refresh the question list after deletion
     } catch (error) {
       console.error(error);
-      // Handle error
     }
   };
 
+  const showUpdateForm = (id, question, answer) => {
+    setUpdateQuestionId(id);
+    setUpdatedQuestion(question);
+    setUpdatedAnswer(answer);
+  };
+
+  const updateQuestion = async () => {
+    try {
+      await axios.put(`http://localhost:5001/api/question/${updateQuestionId}`, {
+        question: updatedQuestion,
+        answer: updatedAnswer
+      });
+      fetchQuestions(); // Refresh the question list after update
+      setUpdateQuestionId('');
+      setUpdatedQuestion('');
+      setUpdatedAnswer('');
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const handleDelete = async (questionId) => {
     try {
       await axios.delete(`http://localhost:5001/api/question/${questionId}`);
@@ -108,154 +117,48 @@ const Dashboard = () => {
     }
   };
 
-  // const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
-
-  // const progressExample = [
-  //   { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
-  //   { title: 'Unique', value: '24.093 Users', percent: 20, color: 'info' },
-  //   { title: 'Pageviews', value: '78.706 Views', percent: 60, color: 'warning' },
-  //   { title: 'New Users', value: '22.123 Users', percent: 80, color: 'danger' },
-  //   { title: 'Bounce Rate', value: 'Average Rate', percent: 40.15, color: 'primary' },
-  // ]
-
-  // const progressGroupExample1 = [
-  //   { title: 'Monday', value1: 34, value2: 78 },
-  //   { title: 'Tuesday', value1: 56, value2: 94 },
-  //   { title: 'Wednesday', value1: 12, value2: 67 },
-  //   { title: 'Thursday', value1: 43, value2: 91 },
-  //   { title: 'Friday', value1: 22, value2: 73 },
-  //   { title: 'Saturday', value1: 53, value2: 82 },
-  //   { title: 'Sunday', value1: 9, value2: 69 },
-  // ]
-
-  // const progressGroupExample2 = [
-  //   { title: 'Male', icon: cilUser, value: 53 },
-  //   { title: 'Female', icon: cilUserFemale, value: 43 },
-  // ]
-
-  // const progressGroupExample3 = [
-  //   { title: 'Organic Search', icon: cibGoogle, percent: 56, value: '191,235' },
-  //   { title: 'Facebook', icon: cibFacebook, percent: 15, value: '51,223' },
-  //   { title: 'Twitter', icon: cibTwitter, percent: 11, value: '37,564' },
-  //   { title: 'LinkedIn', icon: cibLinkedin, percent: 8, value: '27,319' },
-  // ]
-
-  // const tableExample = [
-  //   {
-  //     avatar: { src: avatar1, status: 'success' },
-  //     user: {
-  //       name: 'Yiorgos Avraamu',
-  //       new: true,
-  //       registered: 'Jan 1, 2021',
-  //     },
-  //     country: { name: 'USA', flag: cifUs },
-  //     usage: {
-  //       value: 50,
-  //       period: 'Jun 11, 2021 - Jul 10, 2021',
-  //       color: 'success',
-  //     },
-  //     payment: { name: 'Mastercard', icon: cibCcMastercard },
-  //     activity: '10 sec ago',
-  //   },
-  //   {
-  //     avatar: { src: avatar2, status: 'danger' },
-  //     user: {
-  //       name: 'Avram Tarasios',
-  //       new: false,
-  //       registered: 'Jan 1, 2021',
-  //     },
-  //     country: { name: 'Brazil', flag: cifBr },
-  //     usage: {
-  //       value: 22,
-  //       period: 'Jun 11, 2021 - Jul 10, 2021',
-  //       color: 'info',
-  //     },
-  //     payment: { name: 'Visa', icon: cibCcVisa },
-  //     activity: '5 minutes ago',
-  //   },
-  //   {
-  //     avatar: { src: avatar3, status: 'warning' },
-  //     user: { name: 'Quintin Ed', new: true, registered: 'Jan 1, 2021' },
-  //     country: { name: 'India', flag: cifIn },
-  //     usage: {
-  //       value: 74,
-  //       period: 'Jun 11, 2021 - Jul 10, 2021',
-  //       color: 'warning',
-  //     },
-  //     payment: { name: 'Stripe', icon: cibCcStripe },
-  //     activity: '1 hour ago',
-  //   },
-  //   {
-  //     avatar: { src: avatar4, status: 'secondary' },
-  //     user: { name: 'Enéas Kwadwo', new: true, registered: 'Jan 1, 2021' },
-  //     country: { name: 'France', flag: cifFr },
-  //     usage: {
-  //       value: 98,
-  //       period: 'Jun 11, 2021 - Jul 10, 2021',
-  //       color: 'danger',
-  //     },
-  //     payment: { name: 'PayPal', icon: cibCcPaypal },
-  //     activity: 'Last month',
-  //   },
-  //   {
-  //     avatar: { src: avatar5, status: 'success' },
-  //     user: {
-  //       name: 'Agapetus Tadeáš',
-  //       new: true,
-  //       registered: 'Jan 1, 2021',
-  //     },
-  //     country: { name: 'Spain', flag: cifEs },
-  //     usage: {
-  //       value: 22,
-  //       period: 'Jun 11, 2021 - Jul 10, 2021',
-  //       color: 'primary',
-  //     },
-  //     payment: { name: 'Google Wallet', icon: cibCcApplePay },
-  //     activity: 'Last week',
-  //   },
-  //   {
-  //     avatar: { src: avatar6, status: 'danger' },
-  //     user: {
-  //       name: 'Friderik Dávid',
-  //       new: true,
-  //       registered: 'Jan 1, 2021',
-  //     },
-  //     country: { name: 'Poland', flag: cifPl },
-  //     usage: {
-  //       value: 43,
-  //       period: 'Jun 11, 2021 - Jul 10, 2021',
-  //       color: 'success',
-  //     },
-  //     payment: { name: 'Amex', icon: cibCcAmex },
-  //     activity: 'Last week',
-  //   },
-  // ]
-  const getUserData = async () => {
-    try {
-      const response = await axios.get("http://localhost:5001/api/users");
-      console.log("respone", response.data);
-      // dispatch({
-      //   type: "USER_LOGIN",
-      //   payload: response.data,
-      // });
-      console.log("ss", state);
-    } catch (error) {
-      // console.log("eror", error)
-      //  dispatch({
-      //        type: 'USER_LOGOUT'
-      //       })
-    }
-  };
-  useEffect(() => {
-    getUserData();
-  }, []);
+ 
   return (
     <>
-      <table className="question-table">
+{/* <div>
+      <h2>Questions</h2>
+      <ul>
+        {questions.map((question) => (
+          <li key={question._id}>
+            {updateQuestionId === question._id ? (
+              <div>
+                <input
+                  type="text"
+                  value={updatedQuestion}
+                  onChange={(e) => setUpdatedQuestion(e.target.value)}
+                />
+                <input
+                  type="text"
+                  value={updatedAnswer}
+                  onChange={(e) => setUpdatedAnswer(e.target.value)}
+                />
+                <button onClick={updateQuestion}>Save</button>
+              </div>
+            ) : (
+              <div>
+                <div>{question.question}</div>
+                <div>{question.answer}</div>
+                <button onClick={() => deleteQuestion(question._id)}>Delete</button>
+                <button onClick={() => showUpdateForm(question._id, question.question, question.answer)}>
+                  Update
+                </button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div> */}
+
+      {/* <table className="question-table">
         <thead>
           <tr>
             <th>Question</th>
-            <th>Answer Range</th>
+            <th>Answer </th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -297,7 +200,7 @@ const Dashboard = () => {
                     />
                   </>
                 ) : (
-                  // `${question.answer?.start} - ${question.answer?.end}`
+                 
                   ` ${question.answer}`
                 )}
               </td>
@@ -343,7 +246,7 @@ const Dashboard = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
 
       {/* 
 <table className="question-table">
@@ -649,3 +552,20 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+{/* <Modal
+open={open}
+onClose={handleClose}
+aria-labelledby="modal-modal-title"
+aria-describedby="modal-modal-description"
+>
+<Box sx={style}>
+  <Typography id="modal-modal-title" variant="h6" component="h2">
+    Text in a modal
+  </Typography>
+  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+    Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+  </Typography>
+</Box>
+</Modal> */}
