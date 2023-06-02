@@ -13,20 +13,16 @@ export const userModel= mongoose.model("Users", userSchema);
 const questionSchema = new mongoose.Schema({
   question: { type: String, required: true }, 
   answer: { type: String, required: true }, 
+  createdOn: {type: Date, default: Date.now}
 });
 
 
 export const questionModel = mongoose.model('Question', questionSchema);
 
-const otpSchema = new mongoose.Schema({
-    otp: String,
-    email: String,
-    createdOn: { type: Date, default: Date.now },
-});
-export const otpModel = mongoose.model('Otps', otpSchema);
 
 
-const mongodbURI = process.env.mongodbURI || "mongodb+srv://stallyonstester2:66cjEd7aCrBPu39W@cluster0.pthv2wf.mongodb.net/";
+
+const mongodbURI = process.env.mongodbURI || "mongodb+srv://NewUser:awais123@cluster0.p8wthrf.mongodb.net/questionare?retryWrites=true&w=majority";
 
 mongoose.connect(mongodbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {

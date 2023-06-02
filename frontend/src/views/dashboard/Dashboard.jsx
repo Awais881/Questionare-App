@@ -1,5 +1,6 @@
-import React from 'react'
-import './dashboard.css'
+import React, { useState, useEffect, useContext } from "react";
+import "./dashboard.css";
+import axios from "axios";
 import {
   CAvatar,
   CButton,
@@ -17,10 +18,10 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-} from '@coreui/react'
-import { CChartLine } from '@coreui/react-chartjs'
-import { getStyle, hexToRgba } from '@coreui/utils'
-import CIcon from '@coreui/icons-react'
+} from "@coreui/react";
+import { CChartLine } from "@coreui/react-chartjs";
+import { getStyle, hexToRgba } from "@coreui/utils";
+import CIcon from "@coreui/icons-react";
 import {
   cibCcAmex,
   cibCcApplePay,
@@ -42,19 +43,71 @@ import {
   cilPeople,
   cilUser,
   cilUserFemale,
-} from '@coreui/icons'
+} from "@coreui/icons";
 
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
-
-import WidgetsBrand from '../widgets/WidgetsBrand'
-import WidgetsDropdown from '../widgets/WidgetsDropdown'
+import avatar1 from "src/assets/images/avatars/1.jpg";
+import avatar2 from "src/assets/images/avatars/2.jpg";
+import avatar3 from "src/assets/images/avatars/3.jpg";
+import avatar4 from "src/assets/images/avatars/4.jpg";
+import avatar5 from "src/assets/images/avatars/5.jpg";
+import avatar6 from "src/assets/images/avatars/6.jpg";
+import { GlobalContext } from "../../context/context";
+import WidgetsBrand from "../widgets/WidgetsBrand";
+import WidgetsDropdown from "../widgets/WidgetsDropdown";
 
 const Dashboard = () => {
+  const [questions, setQuestions] = useState([]);
+  const [editQuestion, setEditQuestion] = useState(null);
+  const [startRange, setStartRange] = useState("");
+  const [endRange, setEndRange] = useState("");
+  const { state, dispatch } = useContext(GlobalContext);
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  const fetchQuestions = async () => {
+    try {
+      const response = await axios.get("http://localhost:5001/api/questions");
+      setQuestions(response.data);
+    } catch (error) {
+      console.error(error);
+      // Handle error
+    }
+  };
+  const handleUpdate = (questionId, start, end) => {
+    setEditQuestion(questionId);
+    setStartRange(start);
+    setEndRange(end);
+  };
+
+  const handleSave = async (questionId, updatedQuestion) => {
+    try {
+      await axios.put(
+        `http://localhost:5001/api/question/${questionId}`,
+        updatedQuestion
+      );
+      setEditQuestion(null);
+      setStartRange("");
+      setEndRange("");
+      // Refresh questions
+      fetchQuestions();
+    } catch (error) {
+      console.error(error);
+      // Handle error
+    }
+  };
+
+  const handleDelete = async (questionId) => {
+    try {
+      await axios.delete(`http://localhost:5001/api/question/${questionId}`);
+      // Remove the deleted question from the questions state
+      setQuestions(questions.filter((question) => question._id !== questionId));
+    } catch (error) {
+      console.error(error);
+      // Handle error
+    }
+  };
+
   // const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
 
   // const progressExample = [
@@ -177,13 +230,145 @@ const Dashboard = () => {
   //     activity: 'Last week',
   //   },
   // ]
-
+  const getUserData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5001/api/users");
+      console.log("respone", response.data);
+      // dispatch({
+      //   type: "USER_LOGIN",
+      //   payload: response.data,
+      // });
+      console.log("ss", state);
+    } catch (error) {
+      // console.log("eror", error)
+      //  dispatch({
+      //        type: 'USER_LOGOUT'
+      //       })
+    }
+  };
+  useEffect(() => {
+    getUserData();
+  }, []);
   return (
     <>
+      <table className="question-table">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Answer Range</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {questions.map((question) => (
+            <tr key={question._id}>
+              <td>
+                {editQuestion === question._id ? (
+                  <input
+                    type="text"
+                    value={question.question}
+                    onChange={(e) => {
+                      const updatedQuestion = {
+                        ...question,
+                        question: e.target.value,
+                      };
+                      handleSave(question._id, updatedQuestion);
+                    }}
+                  />
+                ) : (
+                  question.question
+                )}
+              </td>
+              <td>
+                {editQuestion === question._id ? (
+                  <>
+                    <input
+                      type="number"
+                      value={startRange}
+                      placeholder="From"
+                      onChange={(e) => setStartRange(e.target.value)}
+                    />
+                    <span> - </span>
+                    <input
+                      type="number"
+                      value={endRange}
+                      placeholder="To"
+                      onChange={(e) => setEndRange(e.target.value)}
+                    />
+                  </>
+                ) : (
+                  // `${question.answer?.start} - ${question.answer?.end}`
+                  ` ${question.answer}`
+                )}
+              </td>
+              <td>
+                {editQuestion === question._id ? (
+                  <button
+                    onClick={() => {
+                      const updatedQuestion = {
+                        ...question,
+                        answer: {
+                          start: startRange,
+                          end: endRange,
+                        },
+                      };
+                      handleSave(question._id, updatedQuestion);
+                    }}
+                  >
+                    Save
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={() =>
+                        handleUpdate(
+                          question._id,
+                          question.answer?.start,
+                          question.answer?.end
+                        )
+                      }
+                      className="update-button"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleDelete(question._id)}
+                      className="delete-button"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-
-
-
+      {/* 
+<table className="question-table">
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Answer</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {questions.map((question) => (
+          <tr key={question._id}>
+            <td>{question.question}</td>
+            <td>{question.answer}</td>
+            <td>
+            <button onClick={() => handleUpdate(question._id, { question: 'Updated Question', answer: 'Updated Answer' })}>
+            Update
+              </button>
+              <button className="delete-button" onClick={() => handleDelete(question._id)}>Delete</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table> */}
 
       {/* <WidgetsDropdown />
       <CCard className="mb-4">
@@ -460,7 +645,7 @@ const Dashboard = () => {
         </CCol>
       </CRow> */}
     </>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

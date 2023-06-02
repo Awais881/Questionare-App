@@ -17,11 +17,26 @@ import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
 import { GlobalContext } from '../../../context/context';
 import axios from 'axios';
-
+import Swal from 'sweetalert2'
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { state, dispatch } = useContext(GlobalContext);
+
+
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-right',
+    iconColor: 'white',
+    customClass: {
+      popup: 'colored-toast'
+    },
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true
+  })
+
 
   const loginHandler = async (e) => {
     e.preventDefault();
@@ -29,14 +44,27 @@ const Login = () => {
     try {
       let response = await axios.post("http://localhost:5001/api/login" , {
         email: email,
-        password: password
-      }, {
-        withCredentials: true
-      });
+        password: password});
+
+        dispatch({
+          type: 'USER_LOGIN',
+          payload: response.data.profile
+          //  token: response?.data?.data?.token,
+      
+      })
+      Toast.fire({
+        icon: 'success',
+        title: response.data.message
+      })
 
       console.log("Login successful");
     } catch (err) {
       console.log("Error: ", err);
+      dispatch({
+        type: 'USER_LOGOUT'
+        //  token: response?.data?.data?.token,
+    
+    })
     }
   };
 

@@ -51,7 +51,7 @@ app.post("/api/login", async (req, res) => {
           profile: {
             email: user.email,
             role: user.role,
-            age: user.age,
+            // age: user.age,
             _id: user._id
           }
         });
@@ -68,27 +68,146 @@ app.post("/api/login", async (req, res) => {
 });
    
 
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await userModel.find();
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 app.post("/api/question", async (req, res) => {
-
-  if (
-      !req.body.question ||
-      !req.body.answer
-  ) {
-      res.status(400).send("invalid input")
-      return;
+  // Validate the input
+  if (!req.body.question || !req.body.answer) {
+    res.status(400).send("Invalid input");
+    return;
   }
 
+  // Extract the answer range from the request body
+  const { answer } = req.body;
+  const answerRange = `${answer.min}-${answer.max}`;
+
+  // Create a new question using the questionModel
   const save = await questionModel.create({
-     question: req.body.question,
-     answer: req.body.answer
-  })
+    question: req.body.question,
+    answer: answerRange
+  });
 
-  console.log("save: ", save)
+  console.log("save: ", save);
 
-  res.send("question save successfully");
-})
+  res.send("Question saved successfully");
+});
+
+
+app.get("/api/questions", async (req, res) => {
+  try {
+    const questions = await questionModel.find();
+    res.json(questions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to retrieve questions" });
+  }
+});
+
+
+// app.put("/api/question/:id", async (req, res) => {
+//   try {
+//     const questionId = req.params.id;
+//     const updatedQuestion = {
+//       question: req.body.question,
+//       answer: {
+//         start: req.body.start,
+//         end: req.body.end
+//       }
+//     };
+
+//     const question = await questionModel.findByIdAndUpdate(questionId, updatedQuestion, { new: true });
+
+//     if (!question) {
+//       return res.status(404).json({ error: "Question not found" });
+//     }
+
+//     res.json(question);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "An error occurred while updating the question" });
+//   }
+// });
+
+app.put("/api/question/:id", async (req, res) => {
+  try {
+    const questionId = req.params.id;
+
+    // Validate the input
+    if (!req.body.question || !req.body.answer || !req.body.answer.start || !req.body.answer.end) {
+      res.status(400).send("Invalid input");
+      return;
+    }
+
+    // Extract the answer range from the request body
+    const { start, end } = req.body.answer;
+    const answerRange = `${start}-${end}`;
+
+    // Find the question by its ID and update it
+    const question = await questionModel.findByIdAndUpdate(
+      questionId,
+      { question: req.body.question, answer: answerRange },
+      { new: true }
+    );
+
+    if (!question) {
+      res.status(404).send("Question not found");
+      return;
+    }
+
+    res.send("Question updated successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+});
+
+
+app.delete("/api/question/:id", async (req, res) => {
+  try {
+    const questionId = req.params.id;
+
+    const deletedQuestion = await questionModel.findByIdAndDelete(questionId);
+
+    if (!deletedQuestion) {
+      return res.status(404).json({ error: "Question not found" });
+    }
+
+    res.json({ message: "Question deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete question" });
+  }
+});
+
+
+// app.post("/api/question", async (req, res) => {
+
+//   if (
+//       !req.body.question ||
+//       !req.body.answer
+//   ) {
+//       res.status(400).send("invalid input")
+//       return;
+//   }
+
+//   const save = await questionModel.create({
+//      question: req.body.question,
+//      answer: req.body.answer
+//   })
+
+//   console.log("save: ", save)
+
+//   res.send("question save successfully");
+// })
   
 // app.post("/api/question", (req, res) => {
 //   const { question, answer } = req.body;
@@ -123,6 +242,7 @@ app.post("/api/question", async (req, res) => {
 // });
 
 // API endpoint to get a random question (user)
+
 app.get('/api/questions/random', (req, res) => {
   // Get a random question from the database
   Question.aggregate([{ $sample: { size: 1 } }])

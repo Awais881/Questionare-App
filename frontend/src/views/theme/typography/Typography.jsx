@@ -9,7 +9,8 @@ const Typography = () => {
 
 
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+  const [fromValue, setFromValue] = useState('');
+  const [toValue, setToValue] = useState('');
   const { state, dispatch } = useContext(GlobalContext);
 
   const addQuestions = async (e) => {
@@ -18,10 +19,13 @@ const Typography = () => {
     try {
       let response = await axios.post("http://localhost:5001/api/question" , {
         question: question,
-        answer: answer
+        answer: {
+          min: fromValue,
+          max: toValue
+        }
       },);
 
-      console.log("Login successful");
+      console.log("Saved successful");
     } catch (err) {
       console.log("Error: ", err);
     }
@@ -40,8 +44,11 @@ const Typography = () => {
       </div>
       <div className="form-group">
         <label className="label" for="answer-input">Correct Answer:</label>
-       <input type="text"  placeholder='Correct answer' className='answer-input'
-          onChange={(e) => setAnswer(e.target.value)}/>
+       <input type="text"  placeholder='From' className='answer-input'
+          onChange={(e) => setFromValue(e.target.value)}/>
+
+          <input type="text"  placeholder='To' className='answer-input'
+          onChange={(e) => setToValue(e.target.value)}/>
       </div>
      
      
