@@ -48,8 +48,8 @@ const Login = () => {
 
         dispatch({
           type: 'USER_LOGIN',
-          payload: response.data[0]
-          //  token: response?.data?.data?.token,
+          payload: response.data
+         
       
       })
       Toast.fire({
@@ -59,6 +59,11 @@ const Login = () => {
 
       console.log("Login successful");
     } catch (err) {
+      dispatch({
+        type: 'USER_LOGIN',
+       
+    
+    })
       console.log("Error: ", err);
       
     }
