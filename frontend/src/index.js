@@ -7,10 +7,13 @@ import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
 import GlobalContext from "./context/context"
+import { BrowserRouter } from 'react-router-dom';
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
      <GlobalContext>
+     <BrowserRouter>
     <App />
+    </BrowserRouter>
     </GlobalContext>
   </Provider>,
 )

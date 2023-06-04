@@ -12,7 +12,7 @@ import {
   CInputGroupText,
   CRow,
 } from '@coreui/react';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
 import { GlobalContext } from '../../../context/context';
@@ -23,7 +23,12 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { state, dispatch } = useContext(GlobalContext);
 
+  useEffect(() => {
 
+    console.log("Error: ", state);
+      
+    
+}, [])
 
   const Toast = Swal.mixin({
     toast: true,
@@ -48,7 +53,7 @@ const Login = () => {
 
         dispatch({
           type: 'USER_LOGIN',
-          payload: response.data
+          payload: response.data.profile
          
       
       })
@@ -60,7 +65,7 @@ const Login = () => {
       console.log("Login successful");
     } catch (err) {
       dispatch({
-        type: 'USER_LOGIN',
+        type: 'USER_LOGOUT',
        
     
     })
@@ -68,7 +73,7 @@ const Login = () => {
       
     }
   };
-
+ 
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>

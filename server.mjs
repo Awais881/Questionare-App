@@ -40,10 +40,10 @@ app.post("/api/login", async (req, res) => {
     }
 
     // Check if user exists
-    const user = await userModel.findOne({ email: body.email }, "email role ");
+    const user = await userModel.findOne({ email: body.email }, "email role password ");
 
     if (user) {
-      const isMatched = await body.password === user.password;
+      const isMatched = await body.password == user.password;
 
       if (isMatched) {
         res.send({

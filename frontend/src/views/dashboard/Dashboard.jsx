@@ -63,8 +63,29 @@ const Dashboard = () => {
   const { state, dispatch } = useContext(GlobalContext);
 
   useEffect(() => {
-    fetchQuestions();
+    // fetchQuestions();
+    getUser();
   }, []);
+
+
+
+  const getUser = async () => {
+    try {
+      const response = await axios.get("http://localhost:5001/api/users");
+      console.log("response", response.data);
+      dispatch({
+        type: 'USER_LOGIN',
+        payload: response.data[0]
+       
+    
+    })
+    console.log("State" ,state);
+    } catch (error) {
+   
+      // Handle error
+    }
+  };
+
 
   const fetchQuestions = async () => {
     try {
