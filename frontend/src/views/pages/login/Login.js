@@ -24,12 +24,12 @@ const Login = () => {
   const [user_email, setUserEmail] = useState(localStorage.getItem("email"));
   const { state, dispatch } = useContext(GlobalContext);
 
-  useEffect(() => {
+//   useEffect(() => {
 
-    console.log("State: ", state);
+//     console.log("State: ", state);
       
     
-}, [])
+// }, [])
 
   const Toast = Swal.mixin({
     toast: true,
@@ -53,8 +53,10 @@ const Login = () => {
         password: password});
     
         if (response.status === 200) {
-          const user_email = response.data.profile.email;
-          localStorage.setItem("email", user_email);
+          // const user_email = response.data.profile.email;
+          // localStorage.setItem("email", user_email);
+          localStorage.setItem('user', JSON.stringify(response.data.profile));
+
           dispatch({
             type: 'USER_LOGIN',
             payload: response.data.profile

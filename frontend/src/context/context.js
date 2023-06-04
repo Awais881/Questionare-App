@@ -6,7 +6,7 @@ export const GlobalContext = createContext("Initial Value");
 let data = {
   darkTheme: true,
   user: {},
-  isLogin: null,
+  isLogin: false,
   baseUrl: (window.location.href.includes('localhost')) ?
   `http://localhost:5001/` : `/api/v1`
  

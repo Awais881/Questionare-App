@@ -20,11 +20,18 @@ import {
   cilTask,
   cilUser,
 } from '@coreui/icons'
+import { useState, useContext, useEffect } from "react";
 import CIcon from '@coreui/icons-react'
-
+import { GlobalContext } from '../../context/context';
 import avatar8 from './../../assets/images/avatars/8.jpg'
 
 const AppHeaderDropdown = () => {
+  const { state, dispatch } = useContext(GlobalContext);
+  const logoutHandler = () => {
+    localStorage.removeItem('user');
+    dispatch({ type: 'USER_LOGOUT' });
+  };
+  
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
@@ -37,9 +44,9 @@ const AppHeaderDropdown = () => {
           <CIcon icon={cilUser} className="me-2" />
           Profile
         </CDropdownItem>
-        <CDropdownItem href="#">
+        <CDropdownItem href="#" onClick={logoutHandler}>
           <CIcon icon={cilSettings} className="me-2" />
-          Settings
+          Logout
         </CDropdownItem>
         
         

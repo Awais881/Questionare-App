@@ -50,11 +50,20 @@ import { GlobalContext } from './context/context';
       })
       }
     };
-    useEffect(() => {
 
-         getUser()
+
+      useEffect(() => {
+        const user = localStorage.getItem('user');
+        if (user) {
+          dispatch({
+            type: 'USER_LOGIN',
+            payload: JSON.parse(user),
+          });
+        }
+      }, []);
+      
          
-     }, [])
+
     
     return (
      <>
@@ -69,7 +78,7 @@ import { GlobalContext } from './context/context';
       </HashRouter> */}
 
 
-      {(state.isLogin != (null || '' || undefined) && state.isLogin === true) ?
+      {/* {(state.isLogin != (null || '' || undefined) && state.isLogin === true) ?
              
              <Routes>
                  <Route path="*" element={<DefaultLayout />} />
@@ -97,8 +106,28 @@ import { GlobalContext } from './context/context';
  <img width={100} src={Loader} alt="loading" />
   </div>
 
-   : null}
+   : null} */}
 
+{state.isLogin !== null && state.isLogin === true ? (
+  <Routes>
+    <Route path="*" element={<DefaultLayout />} />
+    <Route path="/" element={<Dashboard />} />
+    <Route path="*" element={<Navigate to="/" replace={true} />} />
+  </Routes>
+) : null}
+
+{state.isLogin === false ? (
+  <Routes>
+    <Route path="/login" element={<Login />} />
+    <Route path="*" element={<Navigate to="/login" replace={true} />} />
+  </Routes>
+) : null}
+
+{state.isLogin === null ? (
+  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '100vh' }}>
+    <img width={100} src={Loader} alt="loading" />
+  </div>
+) : null}
 
 
 

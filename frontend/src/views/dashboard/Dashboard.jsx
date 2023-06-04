@@ -65,6 +65,7 @@ const Dashboard = () => {
   useEffect(() => {
     // fetchQuestions();
     // getUser();
+    console.log("State: ", state);
   }, []);
 
 
