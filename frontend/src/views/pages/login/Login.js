@@ -21,11 +21,12 @@ import Swal from 'sweetalert2'
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [user_email, setUserEmail] = useState(localStorage.getItem("email"));
   const { state, dispatch } = useContext(GlobalContext);
 
   useEffect(() => {
 
-    console.log("Error: ", state);
+    console.log("State: ", state);
       
     
 }, [])
@@ -50,18 +51,25 @@ const Login = () => {
       let response = await axios.post("http://localhost:5001/api/login" , {
         email: email,
         password: password});
-
-        dispatch({
-          type: 'USER_LOGIN',
-          payload: response.data.profile
-         
-      
-      })
+    
+        if (response.status === 200) {
+          const user_email = response.data.profile.email;
+          localStorage.setItem("email", user_email);
+          dispatch({
+            type: 'USER_LOGIN',
+            payload: response.data.profile
+           
+        
+        })
+        // console.log("email: ", response);
+      }
+        // console.log("email: ", user_email);
+       
       Toast.fire({
         icon: 'success',
         title: response.data.message
       })
-
+     
       console.log("Login successful");
     } catch (err) {
       dispatch({

@@ -74,7 +74,7 @@ import { GlobalContext } from './context/context';
              <Routes>
                  <Route path="*" element={<DefaultLayout />} />
 
-                //  <Route path="/" element={<Dashboard />} />
+             <Route path="/" element={<Dashboard />} />
                 
                  <Route path="*" element={<Navigate to="/" replace={true} />} />
              </Routes>

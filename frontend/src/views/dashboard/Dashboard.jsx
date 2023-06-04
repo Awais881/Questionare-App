@@ -64,7 +64,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // fetchQuestions();
-    getUser();
+    // getUser();
   }, []);
 
 

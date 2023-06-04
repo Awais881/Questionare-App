@@ -46,7 +46,7 @@ app.post("/api/login", async (req, res) => {
       const isMatched = await body.password == user.password;
 
       if (isMatched) {
-        res.send({
+        res.status(200).send({
           message: "Login Successful",
           profile: {
             email: user.email,
