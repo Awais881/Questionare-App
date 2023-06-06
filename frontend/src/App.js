@@ -1,5 +1,5 @@
 import React, { Component, Suspense } from 'react'
-
+import PrivateRoute from './provider';
 import './scss/style.scss'
 import Dashboard from './views/dashboard/Dashboard'
 import { Routes, Route, Link,  Navigate } from "react-router-dom"
@@ -8,6 +8,9 @@ const loading = (
     <div className="sk-spinner sk-spinner-pulse"></div>
   </div>
 )
+const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
+const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
+import AddQuestions from './views/theme/addQuestion/AddQuestion'
 import Loader from './assets/images/loader (1).gif'
 import { useState, useContext, useEffect } from "react";
 import { GlobalContext } from './context/context';
@@ -60,9 +63,10 @@ import { GlobalContext } from './context/context';
             payload: JSON.parse(user),
           });
         }
-      }, []);
       
-         
+      }, []);
+  
+      
 
     
     return (
@@ -108,38 +112,69 @@ import { GlobalContext } from './context/context';
 
    : null} */}
 
-{state.isLogin !== null && state.isLogin === true ? (
-  <Routes>
-    <Route path="*" element={<DefaultLayout />} />
-    <Route path="/" element={<Dashboard />} />
-    <Route path="*" element={<Navigate to="/" replace={true} />} />
-  </Routes>
-) : null}
+ {state.isLogin !== null && state.isLogin === true ? (
+   <Routes>
+     <Route path="*" element={<DefaultLayout />} />
+     <Route path="*" element={<Dashboard />} />
+     <Route path="*" element={<Navigate to="/" replace={true} />} />
+   </Routes>
+ ) : null}
 
-{state.isLogin === false ? (
-  <Routes>
-    <Route path="/login" element={<Login />} />
-    <Route path="*" element={<Navigate to="/login" replace={true} />} />
-  </Routes>
-) : null}
+ {state.isLogin === false ? (
+   <Routes>
+     <Route path="/" element={<Login />} />
+     <Route path="*" element={<Navigate to="/" replace={true} />} />
+   </Routes>
+ ) : null}
 
-{state.isLogin === null ? (
-  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '100vh' }}>
-    <img width={100} src={Loader} alt="loading" />
-  </div>
-) : null}
+ {state.isLogin === null ? (
+   <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '100vh' }}>
+     <img width={100} src={Loader} alt="loading" />
+   </div>
+ ) : null} 
+
+{/* <Routes>
+      <Route path="/" element={<Navigate to={state.isLogin ? '/dashboard' : '/login'} />} />
+      <Route path="/login" element={<Login />} />
+
+      {state.isLogin && (
+        <Route path="/" element={<DefaultLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/theme/typography" element={<Typography />} />
+          <Route path="/theme/addQuestion" element={<AddQuestions />} />
+          <Route path="/theme/colors" element={<Colors />} />
+        </Route>
+      )}
+
+    </Routes>  */}
+     {/* <Routes>
+      <Route
+        path="/login"
+        element={!state.isLogin ? <Login /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/"
+        element={
+          state.isLogin ? (
+            <DefaultLayout>
+              <Route index element={<Dashboard />} />
+            </DefaultLayout>
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes> */}
+
+
 
 
 
 </>
 
-
-
-
-
-
     )
   }
-// }
+
 
 export default App

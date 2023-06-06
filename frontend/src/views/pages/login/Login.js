@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import {
   CButton,
   CCard,
@@ -18,19 +17,15 @@ import { cilLockLocked, cilUser } from '@coreui/icons';
 import { GlobalContext } from '../../../context/context';
 import axios from 'axios';
 import Swal from 'sweetalert2'
+import { Link, useNavigate, useLocation } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user_email, setUserEmail] = useState(localStorage.getItem("email"));
+  // const [user, setUser] = useState(localStorage.getItem("user"));
   const { state, dispatch } = useContext(GlobalContext);
 
-//   useEffect(() => {
-
-//     console.log("State: ", state);
-      
-    
-// }, [])
-
+  const navigate = useNavigate();
+  
   const Toast = Swal.mixin({
     toast: true,
     position: 'top-right',
@@ -42,6 +37,7 @@ const Login = () => {
     timer: 2000,
     timerProgressBar: true
   })
+
 
 
   const loginHandler = async (e) => {
@@ -63,9 +59,9 @@ const Login = () => {
            
         
         })
-        // console.log("email: ", response);
+        console.log("email: ", response);
       }
-        // console.log("email: ", user_email);
+        console.log("state: ", state);
        
       Toast.fire({
         icon: 'success',
@@ -83,7 +79,16 @@ const Login = () => {
       
     }
   };
- 
+   useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      dispatch({
+        type: 'USER_LOGIN',
+        payload: JSON.parse(user),
+      });
+    }
+  
+  }, []);
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>

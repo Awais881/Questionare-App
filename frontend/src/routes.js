@@ -6,7 +6,7 @@ const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 import AddQuestions from './views/theme/addQuestion/AddQuestion'
 import Dashboard from './views/dashboard/Dashboard'
 const routes = [
-  // { path: '/', exact: true, name: 'Home' },
+  { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/theme/typography', name: 'Typography', element: Typography },
   { path: '/theme/colors', name: 'Color', element: Colors },
