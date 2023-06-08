@@ -42,6 +42,7 @@ const _nav = [
     to: '/theme/colors',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
   },
+  
   // {
   //   component: CNavTitle,
   //   name: 'Components',

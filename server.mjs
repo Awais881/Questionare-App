@@ -78,15 +78,40 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
+// app.post("/api/question", async (req, res) => {
+//   try {
+//     // Validate the input
+//     if (!req.body.question || !req.body.answer) {
+//       res.status(400).json({ error: "Invalid input" });
+//       return;
+//     }
+
+//     const answer = req.body.answer; // Single answer
+
+//     // Create a new question using the questionModel
+//     const save = await questionModel.create({
+//       question: req.body.question,
+//       answer: answer
+//     });
+
+//     console.log("save: ", save);
+
+//     res.status(200).json({ message: "Question saved successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "An error occurred while saving the question" });
+//   }
+// });
+
 app.post("/api/question", async (req, res) => {
   try {
     // Validate the input
-    if (!req.body.question || !req.body.answer) {
-      res.status(400).json({ error: "Invalid input" });
+    if (!req.body.question || !req.body.answer || isNaN(req.body.answer)) {
+      res.status(400).json({ error: "Answer must be a number." });
       return;
     }
 
-    const answer = req.body.answer; // Single answer
+    const answer = parseInt(req.body.answer); // Convert answer to an integer
 
     // Create a new question using the questionModel
     const save = await questionModel.create({
