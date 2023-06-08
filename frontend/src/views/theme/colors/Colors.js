@@ -408,7 +408,7 @@ const Typographys = () => {
         icon: 'success',
         title: response.data.message
       });
-
+         stopTimer();
       // Update the score
       setScore(response.data.score);
     } catch (error) {
