@@ -179,15 +179,106 @@ app.get("/api/questions", async (req, res) => {
 
 
 
-app.get('/api/questions/random', (req, res) => {
-  // Get a random question from the database
-  Question.aggregate([{ $sample: { size: 1 } }])
-    .then((question) => {
-      res.json(question);
-    })
-    .catch((error) => {
-      res.status(500).json({ error: 'Failed to retrieve question' });
-    });
+// app.get('/api/random-question', async (req, res) => {
+//   try {
+//     const totalQuestionsCount = await questionModel.countDocuments();
+//     const randomIndex = Math.floor(Math.random() * totalQuestionsCount);
+//     const randomQuestion = await questionModel.findOne().skip(randomIndex);
+
+//     if (!randomQuestion) {
+//       res.status(404).json({ error: 'No question found' });
+//       return;
+//     }
+
+//     res.status(200).json({ message: 'Random question retrieved successfully', question: randomQuestion });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'An error occurred while retrieving a random question' });
+//   }
+// });
+app.get("/api/random-question", async (req, res) => {
+  try {
+    const numQuestions = parseInt(req.query.num) || 1; // Number of questions to retrieve (default: 1)
+    const questions = await questionModel.aggregate([{ $sample: { size: numQuestions } }]);
+    
+    if (questions.length === 0) {
+      res.status(404).json({ error: "No questions found" });
+      return;
+    }
+    
+    const randomQuestions = questions.map((question) => ({
+      id: question._id,
+      question: question.question
+    }));
+    
+    res.json({ questions: randomQuestions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while retrieving random questions" });
+  }
+});
+// app.post('/api/submit-answers', async (req, res) => {
+//   const answers = req.body.answers;
+
+//   try {
+//     for (const [questionId, answer] of Object.entries(answers)) {
+//       const { min, max } = answer;
+
+//       const question = await questionModel.findById(questionId);
+//       if (!question) {
+//         console.log(`Question ${questionId} not found`);
+//         continue;
+//       }
+//       console.log(`Question ${questionId}: ${question}`);
+//       const actualAnswer = question.answer;
+
+//       if (min <= actualAnswer && actualAnswer <= max) {
+//         console.log(`Question ${questionId}: Correct`);
+       
+//       } else {
+//         console.log(`Question ${questionId}: Wrong`);
+       
+//       }
+//     }
+
+//     res.json({ message: 'Answers submitted successfully' });
+//   } catch (error) {
+//     console.error('Failed to submit answers:', error);
+//     res.status(500).json({ error: 'Failed to submit answers' });
+//   }
+// });
+
+
+app.post('/api/submit-answers', async (req, res) => {
+  const answers = req.body.answers;
+  let correctAnswers = 0;
+
+  try {
+    for (const [questionId, answer] of Object.entries(answers)) {
+      const { min, max } = answer;
+
+      const question = await questionModel.findById(questionId);
+      if (!question) {
+        console.log(`Question ${questionId} not found`);
+        continue;
+      }
+
+      const actualAnswer = question.answer;
+
+      if (min <= actualAnswer && actualAnswer <= max) {
+        console.log(`Question ${questionId}: Correct`);
+        correctAnswers++;
+      } else {
+        console.log(`Question ${questionId}: Wrong`);
+      }
+    }
+
+    const score = Math.floor((correctAnswers / Object.keys(answers).length) * 100);
+    res.json({ message: `Your score is ${score}` });
+  } catch (error) {
+    console.error('Failed to submit answers:', error);
+    res.status(500).json({ error: 'Failed to submit answers' });
+  }
 });
 
 
