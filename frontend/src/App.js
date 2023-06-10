@@ -117,7 +117,7 @@ import { GlobalContext } from './context/context';
  {state.isLogin !== null && state.isLogin === true ? (
    <Routes>
      <Route path="*" element={<DefaultLayout />} />
-     {/* <Route path="/" element={<Dashboard />} />/ */}
+     <Route path="/dashboard" element={<Dashboard />} />
      {/* <Route path="/theme/addQuestion" element={<AddQuestions />} />
      <Route path="/theme/typography" element={<Typography />} />
      <Route path="/theme/colors" element={<Colors />} /> */}

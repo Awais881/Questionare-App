@@ -10,8 +10,8 @@ import Colors from './views/theme/colors/Colors'
 import AddQuestions from './views/theme/addQuestion/AddQuestion'
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  // { path: '/', name: 'Dashboard', element: Dashboard },
+  // { path: '/', exact: true, name: 'Home' },
+  { path: '/', name: 'Dashboard', element: Dashboard },
   { path: '/theme/typography', name: 'Typography', element: Typography },
   { path: '/theme/colors', name: 'Color', element: Colors },
   { path: '/theme/addQuestion', name: 'AddQuestion', element: AddQuestions },
