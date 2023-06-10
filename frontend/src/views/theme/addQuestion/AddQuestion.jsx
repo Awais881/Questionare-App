@@ -412,7 +412,7 @@ const AddQuestion = () => {
 
   const addQuestion = async (question, answer) => {
     try {
-      const response = await axios.post("http://localhost:5001/api/question", {
+      const response = await axios.post("https://questionare-server-production.up.railway.app/api/question", {
         question,
         answer,
       });

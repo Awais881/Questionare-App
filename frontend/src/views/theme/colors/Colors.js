@@ -380,7 +380,7 @@ const Typographys = () => {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/random-question?num=5');
+      const response = await axios.get('https://questionare-server-production.up.railway.app/api/random-question?num=5');
       setQuestions(response.data.questions);
       console.log(response);
       setAnswers({});
@@ -402,7 +402,7 @@ const Typographys = () => {
 
   const submitAnswers = async () => {
     try {
-      const response = await axios.post('http://localhost:5001/api/submit-answers', { answers });
+      const response = await axios.post('https://questionare-server-production.up.railway.app/api/submit-answers', { answers });
 
       Toast.fire({
         icon: 'success',

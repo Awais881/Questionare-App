@@ -8,8 +8,10 @@ const loading = (
     <div className="sk-spinner sk-spinner-pulse"></div>
   </div>
 )
-const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
-const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
+import Typography from './views/theme/typography/Typography'
+import Colors from './views/theme/colors/Colors'
+// const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
+// const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 import AddQuestions from './views/theme/addQuestion/AddQuestion'
 import Loader from './assets/images/loader (1).gif'
 import { useState, useContext, useEffect } from "react";
@@ -115,7 +117,10 @@ import { GlobalContext } from './context/context';
  {state.isLogin !== null && state.isLogin === true ? (
    <Routes>
      <Route path="*" element={<DefaultLayout />} />
-     <Route path="*" element={<Dashboard />} />
+     {/* <Route path="/" element={<Dashboard />} />/ */}
+     {/* <Route path="/theme/addQuestion" element={<AddQuestions />} />
+     <Route path="/theme/typography" element={<Typography />} />
+     <Route path="/theme/colors" element={<Colors />} /> */}
      <Route path="*" element={<Navigate to="/" replace={true} />} />
    </Routes>
  ) : null}

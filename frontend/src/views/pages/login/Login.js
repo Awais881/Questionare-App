@@ -44,7 +44,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      let response = await axios.post("http://localhost:5001/api/login" , {
+      let response = await axios.post("https://questionare-server-production.up.railway.app/api/login" , {
         email: email,
         password: password});
     
