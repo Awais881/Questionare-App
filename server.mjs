@@ -179,23 +179,7 @@ app.get("/api/questions", async (req, res) => {
 
 
 
-// app.get('/api/random-question', async (req, res) => {
-//   try {
-//     const totalQuestionsCount = await questionModel.countDocuments();
-//     const randomIndex = Math.floor(Math.random() * totalQuestionsCount);
-//     const randomQuestion = await questionModel.findOne().skip(randomIndex);
 
-//     if (!randomQuestion) {
-//       res.status(404).json({ error: 'No question found' });
-//       return;
-//     }
-
-//     res.status(200).json({ message: 'Random question retrieved successfully', question: randomQuestion });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'An error occurred while retrieving a random question' });
-//   }
-// });
 app.get("/api/random-question", async (req, res) => {
   try {
     const numQuestions = parseInt(req.query.num) || 1; // Number of questions to retrieve (default: 1)
@@ -217,43 +201,53 @@ app.get("/api/random-question", async (req, res) => {
     res.status(500).json({ error: "An error occurred while retrieving random questions" });
   }
 });
-// app.post('/api/submit-answers', async (req, res) => {
-//   const answers = req.body.answers;
 
+
+
+
+// const shownQuestions = []; // Array to store the IDs of shown questions
+
+// app.get("/api/random-question", async (req, res) => {
 //   try {
-//     for (const [questionId, answer] of Object.entries(answers)) {
-//       const { min, max } = answer;
+//     const numQuestions = parseInt(req.query.num) || 1; // Number of questions to retrieve (default: 1)
+    
+//     const questions = await questionModel.aggregate([
+//       { $match: { _id: { $nin: shownQuestions } } }, // Exclude already shown questions
+//       { $sample: { size: numQuestions } }
+//     ]);
 
-//       const question = await questionModel.findById(questionId);
-//       if (!question) {
-//         console.log(`Question ${questionId} not found`);
-//         continue;
-//       }
-//       console.log(`Question ${questionId}: ${question}`);
-//       const actualAnswer = question.answer;
-
-//       if (min <= actualAnswer && actualAnswer <= max) {
-//         console.log(`Question ${questionId}: Correct`);
-       
-//       } else {
-//         console.log(`Question ${questionId}: Wrong`);
-       
-//       }
+//     if (questions.length === 0) {
+//       res.status(404).json({ error: "No questions found" });
+//       return;
 //     }
+    
+//     const randomQuestions = questions.map((question) => ({
+//       id: question._id,
+//       question: question.question
+//     }));
 
-//     res.json({ message: 'Answers submitted successfully' });
+//     // Add the IDs of the shown questions to the array
+//     randomQuestions.forEach((question) => {
+//       shownQuestions.push(question.id);
+//     });
+    
+//     res.json({ questions: randomQuestions });
 //   } catch (error) {
-//     console.error('Failed to submit answers:', error);
-//     res.status(500).json({ error: 'Failed to submit answers' });
+//     console.error(error);
+//     res.status(500).json({ error: "An error occurred while retrieving random questions" });
 //   }
 // });
 
-
 app.post('/api/submit-answers', async (req, res) => {
+  if (!body.answers) {
+    res.status(400).send(`Required fields missing`);
+    return;
+  }
   const answers = req.body.answers;
   let correctAnswers = 0;
 
   try {
+
     for (const [questionId, answer] of Object.entries(answers)) {
       const { min, max } = answer;
 
