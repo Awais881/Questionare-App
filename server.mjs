@@ -239,14 +239,16 @@ app.get("/api/random-question", async (req, res) => {
 // });
 
 app.post('/api/submit-answers', async (req, res) => {
-  if (!body.answers) {
-    res.status(400).send(`Required fields missing`);
-    return;
-  }
-  const answers = req.body.answers;
-  let correctAnswers = 0;
-
   try {
+    const answers = req.body.answers;
+
+    if (Object.keys(answers).length === 0) {
+      res.status(400).json({ error: 'Please provide at least one answer' });
+      return;
+    }
+
+    let correctAnswers = 0;
+    let attemptedQuestions = 0;
 
     for (const [questionId, answer] of Object.entries(answers)) {
       const { min, max } = answer;
@@ -257,23 +259,32 @@ app.post('/api/submit-answers', async (req, res) => {
         continue;
       }
 
-      const actualAnswer = question.answer;
+      const actualAnswer = parseFloat(question.answer);
+      const minVal = parseFloat(min);
+      const maxVal = parseFloat(max);
 
-      if (min <= actualAnswer && actualAnswer <= max) {
+      if ((minVal <= actualAnswer && actualAnswer <= maxVal) || (actualAnswer >= minVal && actualAnswer <= maxVal)) {
         console.log(`Question ${questionId}: Correct`);
         correctAnswers++;
       } else {
         console.log(`Question ${questionId}: Wrong`);
       }
+
+      attemptedQuestions++;
     }
 
-    const score = Math.floor((correctAnswers / Object.keys(answers).length) * 100);
+    const score = Math.floor((correctAnswers / attemptedQuestions) * 100);
     res.json({ message: `Your score is ${score}` });
   } catch (error) {
     console.error('Failed to submit answers:', error);
     res.status(500).json({ error: 'Failed to submit answers' });
   }
 });
+
+
+
+
+
 
 
 

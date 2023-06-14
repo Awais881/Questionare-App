@@ -644,7 +644,8 @@ const  Dashboard = () => {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get('https://questionare-server-production.up.railway.app/api/questions');
+      const response = await axios.get('http://localhost:5001/api/questions');
+      // const response = await axios.get('https://questionare-server-production.up.railway.app/api/questions');
       setQuestions(response.data);
     } catch (error) {
       console.error(error);

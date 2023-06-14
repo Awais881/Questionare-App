@@ -550,12 +550,12 @@
 
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useContext} from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './color.css'; // Import the CSS file for styling
-
-const Typographys = () => {
+import { GlobalContext } from '../../../context/context';
+const Quiz = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [timer, setTimer] = useState(0);
@@ -563,8 +563,10 @@ const Typographys = () => {
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [score, setScore] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const timeLimit = 10; // Time limit in seconds (3 minutes)
+  const timeLimit = 20; // Time limit in seconds (3 minutes)
+  const [totalQuestions, setTotalQuestions] = useState(0);
 
+  const { state, dispatch } = useContext(GlobalContext);
   useEffect(() => {
     fetchQuestions();
   }, []);
@@ -602,9 +604,11 @@ const Typographys = () => {
 
   const fetchQuestions = async () => {
     try {
-      // const response = await axios.get('http://localhost:5001/api/random-question?num=2');
-      const response = await axios.get('https://questionare-server-production.up.railway.app/api/random-question?num=4');
-      setQuestions(response.data.questions);
+      const response = await axios.get(`http://localhost:5001/api/random-question?num=3`);
+      // const response = await axios.get(`https://real-pear-badger-sock.cyclic.app/api/random-question?num=4`);
+      const fetchedQuestions = response.data.questions;
+      setQuestions(fetchedQuestions);
+      setTotalQuestions(fetchedQuestions.length);
       console.log(response);
       setAnswers({});
     } catch (error) {
@@ -633,24 +637,40 @@ const Typographys = () => {
     setIsTimeUp(false);
   };
 
+
   const submitAnswers = async () => {
     try {
       // Stop the timer
       stopTimer();
-      if (Object.keys(answers).length === 0) {
-        Toast.fire({
-          icon: 'error',
-          title: 'Please provide at least one answer'
-        });
-        return;
-      }
-      const response = await axios.post('https://questionare-server-production.up.railway.app/api/submit-answers', { answers });
-
+  
+      // Create an object to store all the answers, including the unanswered questions
+      const allAnswers = {};
+  
+      // Iterate over all the questions and populate the answers object
+      questions.forEach(question => {
+        const questionId = question.id;
+        const userAnswer = answers[questionId];
+  
+        // Check if the user has answered the question
+        if (userAnswer) {
+          allAnswers[questionId] = userAnswer;
+        } else {
+          // If the user has not answered the question, set default values
+          allAnswers[questionId] = {
+            min: '00',
+            max: '00'
+          };
+        }
+      });
+  
+      // Make the API request with all the answers
+      const response = await axios.post('http://localhost:5001/api/submit-answers', { answers: allAnswers });
+  
       Toast.fire({
         icon: 'success',
         title: response.data.message
       });
-
+  
       // Update the score
       setScore(response.data.message);
     } catch (error) {
@@ -660,7 +680,7 @@ const Typographys = () => {
       });
     }
   };
-
+  
   const resetQuiz = () => {
     setAnswers({});
     setTimer(0);
@@ -687,44 +707,78 @@ const Typographys = () => {
   };
 
   const currentQuestion = questions[currentQuestionIndex];
-
+  // {questions.length > 0 && currentQuestionIndex < questions.length && (
+  //   // Render the components related to the current question
+  // )}
+  
   return (
     <>
       <div className="quiz-container">
-        <h2 className="quiz-heading">Question Bank</h2>
+       
         {!timerStarted && !isTimeUp && score == null && currentQuestionIndex === 0 && (
-          <button className="quiz-button" onClick={startTimer}>Start</button>
+            <div className='main-div'>   <p className='tittle'>Test Your</p>
+            <h2>Knowledge</h2>
+            <button className="quiz-start" onClick={startTimer}>Let's Start</button>
+            </div>
         )}
         {timerStarted && !isTimeUp && (
           <>
+          <div className='input-container'>
+            <div className='box'>
+            <div className="question-count">
+        Question {currentQuestionIndex + 1}/{totalQuestions}
+      </div>
             <div className="timer">{formatTime(timer)}</div>
-            <div className="question-item">
+            {/* <div className="question-item"> */}
               <p className="question-text">{currentQuestion.question}</p>
+              </div>
               <div className="answer-inputs">
-                <input
-                  type="number"
-                  className="answer-input"
-                  placeholder="Min"
-                  value={answers[currentQuestion.id]?.min || ''}
-                  onChange={(event) => handleAnswerChange(currentQuestion.id, 'min', event)}
-                />
-                <input
-                  type="number"
-                  className="answer-input"
-                  required
-                  placeholder="Max"
-                  value={answers[currentQuestion.id]?.max || ''}
-                  onChange={(event) => handleAnswerChange(currentQuestion.id, 'max', event)}
-                />
+              <input
+  type="text"
+  className={`answer-input ${!answers[currentQuestion.id]?.min ? 'invalid' : ''}`}
+  placeholder="Min"
+  value={answers[currentQuestion.id]?.min || ''}
+  onChange={(event) => handleAnswerChange(currentQuestion.id, 'min', event)}
+/>
+
+<input
+  type="text"
+  className={`answer-input ${!answers[currentQuestion.id]?.max ? 'invalid' : ''}`}
+  required
+  placeholder="Max"
+  value={answers[currentQuestion.id]?.max || ''}
+  onChange={(event) => handleAnswerChange(currentQuestion.id, 'max', event)}
+/>
+
               </div>
             </div>
-            {currentQuestionIndex === questions.length - 1 ? (
+        
+            {/* {currentQuestionIndex === questions.length - 1 ? (
               <button className="quiz-button" onClick={submitAnswers} disabled={!Object.keys(answers).length}>
                 Submit
               </button>
             ) : (
               <button className="quiz-button" onClick={nextQuestion} disabled={!Object.keys(answers).length}>Next</button>
-            )}
+            )} */}
+            {currentQuestionIndex === questions.length - 1 ? (
+  <button
+    className="quiz-button"
+    onClick={submitAnswers}
+    disabled={!answers[currentQuestion.id]?.min || !answers[currentQuestion.id]?.max}
+  >
+    Submit
+  </button>
+) : (
+  <button
+    className="quiz-button"
+    onClick={nextQuestion}
+    disabled={!answers[currentQuestion.id]?.min || !answers[currentQuestion.id]?.max}
+  >
+    Next
+  </button>
+)}
+
+           
           </>
         )}
         {isTimeUp && (
@@ -742,21 +796,34 @@ const Typographys = () => {
         )}
         {timerStarted && isTimeUp && <button className="quiz-button" onClick={stopTimer}>Back</button>}
         {!timerStarted && isTimeUp && <button className="quiz-button" onClick={stopTimer}>Back</button>}
-        {score !== null && (
+        {/* {score !== null && (
           <div>
             <p>{score}</p>
             <button className="quiz-button" onClick={resetQuiz}>Attempt again</button>
           </div>
-        )}
+        )} */}
 
 
-      
+{score !== null && (
+  <div className="result-container">
+    <h2>Quiz Completed!</h2>
+    <p>Your Score: <span className="score">{score}</span></p>
+    <div className="result-feedback">
+      <p>Great job!</p>
+      <p>You have successfully completed the quiz.</p>
+    </div>
+    <button className="quiz-button" onClick={resetQuiz}>Attempt Again</button>
+  </div>
+)}
+
+
       </div>
     </>
   );
 };
 
-export default Typographys;
+export default Quiz;
+
 
 
 
