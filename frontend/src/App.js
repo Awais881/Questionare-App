@@ -10,6 +10,7 @@ const loading = (
 )
 import Typography from './views/theme/typography/Typography'
 import Colors from './views/theme/colors/Colors'
+import ChangePassword from './views/theme/change-password/change-pass'
 // const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 // const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 import AddQuestions from './views/theme/addQuestion/AddQuestion'
@@ -118,6 +119,7 @@ import { GlobalContext } from './context/context';
    <Routes>
      <Route path="*" element={<DefaultLayout />} />
      <Route path="/dashboard" element={<Dashboard />} />
+     <Route path="/change-password" element={<ChangePassword />} />
      {/* <Route path="/theme/addQuestion" element={<AddQuestions />} />
      <Route path="/theme/typography" element={<Typography />} />
      <Route path="/theme/colors" element={<Colors />} /> */}
