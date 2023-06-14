@@ -253,7 +253,7 @@ const Typographys = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://questionare-server-production.up.railway.app/api/question', {
+      const response = await axios.post('http://localhost:5001/api/question', {
         question: question,
         answer: answer
       });
@@ -272,7 +272,7 @@ const Typographys = () => {
 
   const deleteQuestion = async (id) => {
     try {
-      const response = await axios.delete(`https://questionare-server-production.up.railway.app/api/question/${id}`);
+      const response = await axios.delete(`http://localhost:5001/api/question/${id}`);
       Toast.fire({
         icon: 'success',
         title: response.data.message
@@ -292,7 +292,7 @@ const Typographys = () => {
 
   const updateQuestion = async () => {
     try {
-      const response = await axios.put(`https://questionare-server-production.up.railway.app/api/question/${updateQuestionId}`, {
+      const response = await axios.put(`http://localhost:5001/api/question/${updateQuestionId}`, {
         question: updatedQuestion,
         answer: updatedAnswer
       });

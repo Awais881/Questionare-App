@@ -713,6 +713,16 @@ const Quiz = () => {
   
   return (
     <>
+      {questions.length === 0 ? (
+      <div className="quiz-container">
+      <div className="empty-message">
+        <h2>No questions available</h2>
+        <p>Sorry, there are no questions in the database to create a quiz.</p>
+        <p>Please try again later.</p>
+      </div>
+      <button className="quiz-button" onClick={resetQuiz}>Retry</button>
+    </div>
+    ) : (
       <div className="quiz-container">
        
         {!timerStarted && !isTimeUp && score == null && currentQuestionIndex === 0 && (
@@ -818,6 +828,8 @@ const Quiz = () => {
 
 
       </div>
+    )
+}
     </>
   );
 };
