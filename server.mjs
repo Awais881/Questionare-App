@@ -67,6 +67,35 @@ app.post("/api/login", async (req, res) => {
   }
 });
    
+app.put('/api/change-password', async (req, res) => {
+  try {
+    const { email, newPassword, confirmPassword } = req.body;
+
+    // Retrieve the user from the database using the email
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if the new password and confirm password match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ error: 'New password and confirm password do not match' });
+    }
+
+    // Update the user's password
+    user.password = newPassword;
+
+    // Save the updated user to the database
+    await user.save();
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while changing the password' });
+  }
+});
+
 
 app.get("/api/users", async (req, res) => {
   try {
@@ -140,6 +169,15 @@ app.delete("/api/question/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while deleting the question" });
+  }
+});
+app.delete("/api/delete-all", async (req, res) => {
+  try {
+    await questionModel.deleteMany({});
+    res.status(200).json({ message: "All questions deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while deleting the questions" });
   }
 });
 

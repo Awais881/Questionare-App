@@ -737,13 +737,23 @@ const  Dashboard = () => {
     boxShadow: 24,
     p: 4
   };
-
+  const deleteAllQuestions = async () => {
+    try {
+      const response = await axios.delete('http://localhost:5001/api/delete-all');
+      console.log(response.data.message); // Optional: Log the success message
+      // Perform any additional actions or update UI as needed
+    } catch (error) {
+      console.error(error);
+      // Handle the error and update UI accordingly
+    }
+  };
   return (
     <>
       <div>
         <h2>Questions</h2>
         <Link to="/theme/addQuestion">
           <button className="add-question">Add New Question</button>
+          <button className="add-question" onClick={deleteAllQuestions}>Delete All </button>
         </Link>
 
         <table className="question-table">
