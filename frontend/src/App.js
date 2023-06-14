@@ -121,7 +121,7 @@ import { GlobalContext } from './context/context';
      <Route path="/dashboard" element={<Dashboard />} />
      <Route path="/change-password" element={<ChangePassword />} />
      {/* <Route path="/theme/addQuestion" element={<AddQuestions />} />
-     <Route path="/theme/typography" element={<Typography />} />
+    //  <Route path="/theme/typography" element={<Typography />} />
      <Route path="/theme/colors" element={<Colors />} /> */}
      <Route path="*" element={<Navigate to="/" replace={true} />} />
    </Routes>

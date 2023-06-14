@@ -608,7 +608,9 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
+import Typography from '@mui/material/Typography/Typography';
+
 import Modal from '@mui/material/Modal';
 
 import ReactPaginate from 'react-paginate';
@@ -836,4 +838,4 @@ const  Dashboard = () => {
 };
 
 export default  Dashboard;
-;
+
